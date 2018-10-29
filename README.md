@@ -2,29 +2,30 @@
 [![Build Status](https://travis-ci.org/spacejam/rust-crdt.svg?branch=master)](https://travis-ci.org/spacejam/rust-crdt)
 [![crates.io](http://meritbadge.herokuapp.com/crdts)](https://crates.io/crates/crdts)
 
-Thoroughly tested serializable practical CRDT's ported from riak_dt.
-
+A family of thoroughly tested CRDT's.
 
 [documentation](https://docs.rs/crdts/1.2.11/crdts/)
 
+- **VClock**: Vector clock. Typically used to track the causal history
+- **ORSWOT**: Observed-Remove Set Without Tombstones. An add-biased set
+- **Map**: Add biased Map with reset-remove semantics. Map values are also CRDT's
+- **MVReg**: Multi-Value Register. Holds a value, concurrent edits are delt with by storing both.
+- **LWWReg**: Last-Write-Wins Register. Holds a value, concurrent edits are resolved by keeping the value with the largest counter.
+- **GCounter**: Grow-only Counter. A counter that only goes up.
+- **PNCounter**: Pos/Neg Counter. A counter that can go up and down.
+- **GSet**: Grow-only set. A set that only grows
 
-- [x] Vector Clock
-- [x] ORSWOT
-- [x] LWW Register
-- [x] G-Counter
-- [ ] Top-K Set
-- [ ] Map
-- [ ] G-Set
-- [ ] OR-Set
-- [x] PN-Counter
-- [ ] EM-Counter
 
+#### nice to haves (PR's welcome)
+- a sequence CRDT
+- Configure the bias of existing add-biased CRDT's. Would be nice to set a switch to enable a remove bias.
 
 ## examples
 
 ### OR-Set Without Tombstones (ORSWOT)
 ```rust
-let (mut a, mut b) = (Orswot::new(), Orswot::new());
+let mut a = Orswot::new();
+let mut b = Orswot::new();
 a.add("value bar".to_string(), "witnessing node A".to_string());
 assert_eq!(a.value(), vec!["value bar".to_string()]);
 b.add("value baz".to_string(), "witnessing node B".to_string());
