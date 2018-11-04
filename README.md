@@ -16,9 +16,9 @@ A family of thoroughly tested CRDT's.
 - **GSet**: Grow-only set. A set that only grows
 
 
-#### nice to haves (PR's welcome)
+#### Things we still need to build (PR's welcome)
 - a sequence CRDT
-- Configure the bias of existing add-biased CRDT's. Would be nice to set a switch to enable a remove bias.
+- ability to configure the bias of add-biased CRDT's. Would be nice to choose a remove bias.
 
 ## examples
 
