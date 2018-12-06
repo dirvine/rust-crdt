@@ -3,61 +3,61 @@ extern crate crdts;
 use crdts::{CvRDT, CmRDT, Map, Orswot};
 
 fn main() {
-    let mut map: Map<String, Orswot<String, u8>, u8> = Map::new();
-    let add_ctx = map
-        .len()
+    let mut friend_map: Map<String, Orswot<String, u8>, u8> = Map::new();
+    let add_ctx = friend_map.len()
         .derive_add_ctx(1);
 
     {
-        let op = map.update(
+        let op = friend_map.update(
             "bob",
             add_ctx,
-            |set, c| set.add("is feeling O.K.", c)
+            |set, ctx| set.add("janet", ctx)
         );
-        map.apply(&op);
+        friend_map.apply(&op);
     }
-
-    let mut map_on_device2 = map.clone();
-    // the map on the 2nd devices adds to the set
-    // under the "bob" key
+    let mut friend_map_on_2nd_device = friend_map.clone();
+    // the map on the 2nd devices adds to `bob`'s friend set
     {
-        let device2_add_ctx = map_on_device2
+        let device2_add_ctx = friend_map_on_2nd_device
             .len()
             .derive_add_ctx(2);
-        let op = map_on_device2.update(
+        let op = friend_map_on_2nd_device.update(
             "bob",
             device2_add_ctx,
-            |set, c| set.add("is overwhelmed", c)
+            |set, c| set.add("erik", c)
         );
-        map_on_device2.apply(&op);
+        friend_map_on_2nd_device.apply(&op);
     }
-    // concurrently the map on the first device
-    // remove 'bob'
+
+    // Meanwhile, the map on the first device removes
+    // the entire 'bob' entry from the friend map.
     {
-        let rm_ctx = map
+        let rm_ctx = friend_map
             .get(&"bob".to_string())
             .derive_rm_ctx();
-        map.rm("bob", rm_ctx);
+        friend_map.rm("bob", rm_ctx);
     }
 
     // once these two devices synchronize...
-    map.merge(&map_on_device2);
-    map_on_device2.merge(&map);
+    friend_map.merge(&friend_map_on_2nd_device);
+    friend_map_on_2nd_device.merge(&friend_map);
+    assert_eq!(friend_map, friend_map_on_2nd_device);
+    
+    // ... we see that "bob" is present but only
+    // contains `erik`.
+    //
+    // This is because the `erik` entry was not
+    // seen by the first device when it deleted
+    // the entry.
+    let bobs_friends: Vec<_> = friend_map   // Map<String, Orswot>
+        .get(&"bob".to_string()).val        // Option<Orswot>
+        .unwrap()                           // Orswot
+        .read().val                         // HashSet
+        .into_iter()                        // Iter<Item=String>
+        .collect();                         // Vec<String>
 
-    // we see that "bob" is present but the
-    // set under bob only contains the changes
-    // unseen by the first map
-
-    let val = map
-        .get(&"bob".to_string()).val
-        .map(|set| set.read().val);
     assert_eq!(
-        val,
-        Some(
-            // only one entry left
-            vec!["is overwhelmed".to_string()]
-                .into_iter()
-                .collect()
-        )
+        bobs_friends,
+        vec!["erik".to_string()]
     );
 }

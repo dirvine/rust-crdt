@@ -112,7 +112,7 @@ fn adds_dont_destroy_causality() {
     // should descend from vclock { 1->1, 2->1 }
     assert_eq!(
         c_element_ctx.rm_clock,
-        vec![(1, 1), (2, 1)].into_iter().collect()
+        vec![Dot::new(1, 1), Dot::new(2, 1)].into_iter().collect()
     );
 
     let a_add_ctx = a.read().derive_add_ctx(7);
@@ -260,7 +260,12 @@ fn test_dead_node_update() {
     let b_op = b.add(1, b.read().derive_add_ctx(2));
     b.apply(&b_op);
     let bctx = b.read();
-    assert_eq!(bctx.add_clock, vec![(1, 1), (2, 1)].into());
+
+    assert_eq!(
+        bctx.add_clock,
+        vec![Dot::new(1, 1), Dot::new(2, 1)].into_iter().collect()
+    );
+
     let rm_op = a.remove(0, bctx.derive_rm_ctx());
     a.apply(&rm_op);
     assert_eq!(a.read().val, HashSet::new());
