@@ -1,63 +1,41 @@
-# rust-crdt
+# crdts: A family of thoroughly tested hybrid CRDT's.
 [![Build Status](https://travis-ci.org/rust-crdt/rust-crdt.svg?branch=master)](https://travis-ci.org/rust-crdt/rust-crdt)
 [![crates.io](http://meritbadge.herokuapp.com/crdts)](https://crates.io/crates/crdts)[[![docs.rs](https://docs.rs/crdts/badge.svg)](https://docs.rs/crdts)
 
-A family of thoroughly tested CRDT's.
+The CRDT's here all support both State and Op based replication, use them as you need them.
 
-#### **VClock**
-Vector clock. Typically used to track causal history
+# How to use this library
+First create an instance of the CRDT, we'll use the MVReg CRDT in this example.
 ``` rust
-let mut v1: VClock<u256> = VClock::new();
-v1.apply_inc(12345);
-
-let mut v2: VClock<u256> = VClock::new();
-v2.apply_inc(54321);
-
-assert!(!(v1 < v2) && !(v2 < v1) && v1 != v2);
-let mut v3 = v1.clone();
-v3.merge(&v2);
-assert!(v1 < v3 && v2 < v3);
-
-assert_eq!(v3.get(12345), 1);
-assert_eq!(v3.get(54321), 1);
-```
-- **ORSWOT**: Observed-Remove Set Without Tombstones. An add-biased set
-- **Map**: Add biased Map with reset-remove semantics. Map values are also CRDT's
-- **MVReg**: Multi-Value Register. Holds a value, concurrent edits are delt with by storing both.
-- **LWWReg**: Last-Write-Wins Register. Holds a value, concurrent edits are resolved by keeping the value with the largest counter.
-- **GCounter**: Grow-only Counter. A counter that only goes up.
-- **PNCounter**: Pos/Neg Counter. A counter that can go up and down.
-- **GSet**: Grow-only set. A set that only grows
-
-
-#### Things we still need to build (PR's welcome)
-- a sequence CRDT
-- ability to configure the bias of add-biased CRDT's. Can we choose a remove bias.
-
-## examples
-
-### OR-Set Without Tombstones (ORSWOT)
-```rust
-let mut a = Orswot::new();
-let mut b = Orswot::new();
-a.add("value bar".to_string(), "witnessing node A".to_string());
-assert_eq!(a.value(), vec!["value bar".to_string()]);
-b.add("value baz".to_string(), "witnessing node B".to_string());
-assert_eq!(b.value(), vec!["value baz".to_string()]);
-let mut c = a.clone();
-assert_eq!(c.value(), vec!["value bar".to_string()]);
-c.merge(b);
-assert_eq!(c.value(), vec!["value bar".to_string(), "value baz".to_string()]);
-unsafe { a.remove("value bar".to_string()); }
-let mut d = a.clone();
-d.merge(c);
-assert_eq!(d.value(), vec!["value baz".to_string()]);
+let mut reg = MVReg::new();
 ```
 
+To edit your CRDT, you'll need to provide a context, the only way to get a context is to first read from the CRDT.
+``` rust
+let read_ctx = reg.read();
+assert_eq!(read_ctx.val, vec![]);
+```
 
+Reading anything from a CRDT will produces a `ReadCtx`. e.g. `Map::len()` returns a `ReadCtx<usize>`, to access the value from the `ReadCtx`, use the `.val` field.
+
+Now you'll derive the appropriate context for the edit you want to make, for edits that remove data, you'll need to use `.derive_rm_ctx()`, for adding new data you'll need `.derive_add_ctx(<actor_id>)` where `<actor_id>` is a unique identifier of the device/thread/server acting on the CRDT.
+
+``` rust
+let add_ctx = read_ctx.derive_add_ctx(123);
+let rm_ctx = read_ctx.derive_rm_ctx();
+
+reg.set("Value".to_string(), add_ctx);
+reg.clear(rm_ctx);
+assert_eq!(reg.read().val, vec!["Value".to_string()])
+```
+
+Now you may be wondering why we have a value when we just cleared the register. This is because the `MVReg::clear` only removed data for which the `rm_ctx` has seen. The `"Value"` string was added with a context that marked a new edit from actor `123` which was unseen at the time that we first read the state of the `MVReg`.
+
+
+
+## Further reading
 If you want to learn about how CRDTs work, I suggest starting with the readme from [aphyr's meangirls](https://github.com/aphyr/meangirls) repo.
 Afterwards, either check out the [riak dt](https://github.com/basho/riak_dt) source code or [A comprehensive study of CRDTs](https://hal.inria.fr/file/index/docid/555588/filename/techreport.pdf) depending on if you like to read papers or jump straight to source code examples.
-
 
 ### references
 
