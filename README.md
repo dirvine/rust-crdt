@@ -9,14 +9,17 @@ Vector clock. Typically used to track causal history
 ``` rust
 let mut v1: VClock<u256> = VClock::new();
 v1.apply_inc(12345);
-assert_eq!(format!("{}", v1), "<12345:1>");
+
 let mut v2: VClock<u256> = VClock::new();
 v2.apply_inc(54321);
-assert_eq!(format!("{}", v2), "<54321:1>");
+
 assert!(!(v1 < v2) && !(v2 < v1) && v1 != v2);
 let mut v3 = v1.clone();
 v3.merge(&v2);
 assert!(v1 < v3 && v2 < v3);
+
+assert_eq!(v3.get(12345), 1);
+assert_eq!(v3.get(54321), 1);
 ```
 - **ORSWOT**: Observed-Remove Set Without Tombstones. An add-biased set
 - **Map**: Add biased Map with reset-remove semantics. Map values are also CRDT's
