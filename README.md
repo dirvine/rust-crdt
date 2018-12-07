@@ -1,12 +1,23 @@
 # rust-crdt
 [![Build Status](https://travis-ci.org/rust-crdt/rust-crdt.svg?branch=master)](https://travis-ci.org/rust-crdt/rust-crdt)
-[![crates.io](http://meritbadge.herokuapp.com/crdts)](https://crates.io/crates/crdts)
+[![crates.io](http://meritbadge.herokuapp.com/crdts)](https://crates.io/crates/crdts)[[![docs.rs](https://docs.rs/crdts/badge.svg)](https://docs.rs/crdts)
 
 A family of thoroughly tested CRDT's.
 
-[documentation](https://docs.rs/crdts/1.2.11/crdts/)
-
-- **VClock**: Vector clock. Typically used to track the causal history
+#### **VClock**
+Vector clock. Typically used to track causal history
+``` rust
+let mut v1: VClock<u256> = VClock::new();
+v1.apply_inc(12345);
+assert_eq!(format!("{}", v1), "<12345:1>");
+let mut v2: VClock<u256> = VClock::new();
+v2.apply_inc(54321);
+assert_eq!(format!("{}", v2), "<54321:1>");
+assert!(!(v1 < v2) && !(v2 < v1) && v1 != v2);
+let mut v3 = v1.clone();
+v3.merge(&v2);
+assert!(v1 < v3 && v2 < v3);
+```
 - **ORSWOT**: Observed-Remove Set Without Tombstones. An add-biased set
 - **Map**: Add biased Map with reset-remove semantics. Map values are also CRDT's
 - **MVReg**: Multi-Value Register. Holds a value, concurrent edits are delt with by storing both.
