@@ -8,7 +8,8 @@ A family of CRDT's supporting both State and Op based replication.
 
 # How to use this library
 ## Interacting with the CRDT's
-Working with CRDT's is a bit different than datastructures you're used to, especially `causal` CRDT's. With `causal` CRDT's we need to make sure that your edits only effect the data that you've seen, for example, if you clear a `Map`, we want to be able to say that this clear operation will only effect entries in the map that you are aware of. If you are not tracking this causal history you could end up deleting data that you are not aware of. A potential sequence of steps that lead to lost data:
+Working with a CRDT is a bit different from datastructures you may be used to. Since we may be acting on data that is concurrently being edited by others, we need to make sure that your local edits only effect the data that you've seen.
+For example, if you clear a `Map`, we want to be able to say that this clear operation will only effect entries in the map that you are aware of. If you are not tracking this causal history of your edits correctly, you could end up deleting data that you are not aware of. e.g. a good way to lose data would be to do something like this:
 1. you receive a `Map` CRDT from across the network.
 2. you read the `Map`'s key/value pairs and display them to the user.
 3. you receive an update version of the `Map` CRDT but the user has not refreshed their view.
