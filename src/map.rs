@@ -1,14 +1,17 @@
-use std::collections::HashMap;
-use std::cmp::Ordering;
-use std::collections::{BTreeMap, BTreeSet};
-use std::fmt::Debug;
-use std::mem;
+use std::{
+    cmp::Ordering,
+    collections::{BTreeMap, BTreeSet, HashMap},
+    fmt::Debug,
+    mem,
+};
 
 use serde::{Deserialize, Serialize};
 
-use crate::ctx::{AddCtx, ReadCtx, RmCtx};
-use crate::traits::{Causal, CmRDT, CvRDT};
-use crate::vclock::{Actor, Dot, VClock};
+use crate::{
+    ctx::{AddCtx, ReadCtx, RmCtx},
+    traits::{Causal, CmRDT, CvRDT},
+    vclock::{Actor, Dot, VClock},
+};
 
 /// Key Trait alias to reduce redundancy in type decl.
 pub trait Key: Debug + Ord + Clone {}
@@ -198,7 +201,8 @@ impl<K: Key, V: Val<A>, A: Actor> CvRDT for Map<K, V, A> {
                 //  1. have seen it and dropped it
                 //  2. have not seen it
                 if self.clock >= entry.clock {
-                    // We've seen this entry and dropped it, we won't add it back
+                    // We've seen this entry and dropped it, we won't add it
+                    // back
                 } else {
                     // We have not seen this version of this entry, so we add it.
                     // but first, we have to remove the information on this entry
@@ -336,8 +340,10 @@ impl<K: Key, V: Val<A>, A: Actor> Map<K, V, A> {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::mvreg::{self, MVReg};
-    use crate::orswot::Orswot;
+    use crate::{
+        mvreg::{self, MVReg},
+        orswot::Orswot,
+    };
 
     type TestActor = u8;
     type TestKey = u8;

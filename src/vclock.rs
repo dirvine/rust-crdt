@@ -3,7 +3,7 @@
 //! # Examples
 //!
 //! ```
-//! use crdts::{Dot, VClock, CmRDT};
+//! use crdts::{CmRDT, Dot, VClock};
 //!
 //! let mut a = VClock::new();
 //! let mut b = VClock::new();
@@ -12,19 +12,22 @@
 //! assert!(a > b);
 //! ```
 
-// TODO: we have a mixture of language here with witness and actor. Clean this up
-use std::cmp::{self, Ordering};
-use std::collections::{btree_map, BTreeMap};
-use std::fmt::{self, Debug, Display};
-use std::hash::Hash;
-use std::mem;
+// TODO: we have a mixture of language here with witness and actor. Clean this
+// up
+use std::{
+    cmp::{self, Ordering},
+    collections::{btree_map, BTreeMap},
+    fmt::{self, Debug, Display},
+    hash::Hash,
+    mem,
+};
 
 use serde::{Deserialize, Serialize};
 
 use crate::traits::{Causal, CmRDT, CvRDT};
 
-/// Common Actor type. Actors are unique identifier for every `thing` mutating a VClock.
-/// VClock based CRDT's will need to expose this Actor type to the user.
+/// Common Actor type. Actors are unique identifier for every `thing` mutating a
+/// VClock. VClock based CRDT's will need to expose this Actor type to the user.
 pub trait Actor: Ord + Clone + Hash + Debug {}
 impl<A: Ord + Clone + Hash + Debug> Actor for A {}
 
@@ -112,7 +115,7 @@ impl<A: Actor> CmRDT for VClock<A> {
     ///
     /// # Examples
     /// ```
-    /// use crdts::{VClock, Dot, CmRDT};
+    /// use crdts::{CmRDT, Dot, VClock};
     /// let mut v = VClock::new();
     ///
     /// v.apply(Dot::new("A", 2));
@@ -143,8 +146,8 @@ impl<A: Actor> VClock<A> {
         }
     }
 
-    /// Returns a clone of self but with information that is older than given clock is
-    /// forgotten
+    /// Returns a clone of self but with information that is older than given
+    /// clock is forgotten
     pub fn clone_without(&self, base_clock: &Self) -> Self {
         let mut cloned = self.clone();
         cloned.forget(&base_clock);
@@ -162,7 +165,7 @@ impl<A: Actor> VClock<A> {
     ///
     /// # Examples
     /// ```
-    /// use crdts::{VClock, CmRDT};
+    /// use crdts::{CmRDT, VClock};
     /// let mut a = VClock::new();
     ///
     /// // `a.inc()` does not mutate the vclock!
@@ -192,7 +195,7 @@ impl<A: Actor> VClock<A> {
     ///
     /// # Examples
     /// ```
-    /// use crdts::{VClock, CmRDT};
+    /// use crdts::{CmRDT, VClock};
     /// let (mut a, mut b) = (VClock::new(), VClock::new());
     /// a.apply(a.inc("A"));
     /// b.apply(b.inc("B"));
@@ -283,8 +286,8 @@ impl<A: Actor> std::iter::Iterator for IntoIter<A> {
 }
 
 impl<A: Actor> std::iter::IntoIterator for VClock<A> {
-    type Item = Dot<A>;
     type IntoIter = IntoIter<A>;
+    type Item = Dot<A>;
 
     /// Consumes the vclock and returns an iterator over dots in the clock
     fn into_iter(self) -> Self::IntoIter {

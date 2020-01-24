@@ -1,5 +1,3 @@
-
-
 use crdts::{CmRDT, CvRDT, Map, Orswot};
 
 fn main() {

@@ -1,15 +1,17 @@
 use num_bigint::BigUint;
 use serde::{Deserialize, Serialize};
 
-use crate::traits::{Causal, CmRDT, CvRDT};
-use crate::vclock::{Actor, Dot, VClock};
+use crate::{
+    traits::{Causal, CmRDT, CvRDT},
+    vclock::{Actor, Dot, VClock},
+};
 
 /// `GCounter` is a grow-only witnessed counter.
 ///
 /// # Examples
 ///
 /// ```
-/// use crdts::{GCounter, CmRDT};
+/// use crdts::{CmRDT, GCounter};
 ///
 /// let mut a = GCounter::new();
 /// let mut b = GCounter::new();

@@ -1,4 +1,3 @@
-
 use crdts::{CmRDT, CvRDT, VClock};
 use std::cmp::Ordering::*;
 

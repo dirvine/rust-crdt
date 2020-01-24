@@ -1,5 +1,4 @@
-use std::collections::BTreeSet;
-use std::fmt::Debug;
+use std::{collections::BTreeSet, fmt::Debug};
 
 use serde::{Deserialize, Serialize};
 
@@ -23,7 +22,7 @@ impl<T: Ord + Clone> CvRDT for GSet<T> {
     /// # Examples
     ///
     /// ```
-    /// use crdts::{GSet, CvRDT, CmRDT};
+    /// use crdts::{CmRDT, CvRDT, GSet};
     /// let (mut a, mut b) = (GSet::new(), GSet::new());
     /// a.insert(1);
     /// b.insert(2);

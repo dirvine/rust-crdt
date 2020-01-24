@@ -1,6 +1,5 @@
 use crdts;
 
-
 use crdts::{orswot::Op, *};
 use std::collections::HashSet;
 
@@ -195,16 +194,16 @@ fn test_no_dots_left_test() {
 // port from riak_dt
 // A test I thought up
 // - existing replica of ['A'] at a and b,
-// - add ['B'] at b, but not communicated to any other nodes, context returned to client
+// - add ['B'] at b, but not communicated to any other nodes, context returned
+//   to client
 // - b goes down forever
 // - remove ['A'] at a, using the context the client got from b
-// - will that remove happen?
-//   case for shouldn't: the context at b will always be bigger than that at a
-//   case for should: we have the information in dots that may allow us to realise it can be removed
-//     without us caring.
+// - will that remove happen? case for shouldn't: the context at b will always
+//   be bigger than that at a case for should: we have the information in dots
+//   that may allow us to realise it can be removed without us caring.
 //
-// as the code stands, 'A' *is* removed, which is almost certainly correct. This behaviour should
-// always happen, but may not. (ie, the test needs expanding)
+// as the code stands, 'A' *is* removed, which is almost certainly correct. This
+// behaviour should always happen, but may not. (ie, the test needs expanding)
 #[test]
 fn test_dead_node_update() {
     let mut a = Orswot::new();

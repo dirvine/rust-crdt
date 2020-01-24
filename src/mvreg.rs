@@ -1,12 +1,16 @@
-use std::cmp::Ordering;
-use std::fmt::{self, Debug, Display};
-use std::mem;
+use std::{
+    cmp::Ordering,
+    fmt::{self, Debug, Display},
+    mem,
+};
 
 use serde::{Deserialize, Serialize};
 
-use crate::ctx::{AddCtx, ReadCtx};
-use crate::traits::{Causal, CmRDT, CvRDT};
-use crate::vclock::{Actor, VClock};
+use crate::{
+    ctx::{AddCtx, ReadCtx},
+    traits::{Causal, CmRDT, CvRDT},
+    vclock::{Actor, VClock},
+};
 
 /// A Trait alias for the possible values MVReg's may hold
 pub trait Val: Debug + Clone {}
@@ -17,7 +21,7 @@ impl<T: Debug + Clone> Val for T {}
 /// we can't establish a causal history.
 ///
 /// ```rust
-/// use crdts::{CmRDT, MVReg, Dot, VClock};
+/// use crdts::{CmRDT, Dot, MVReg, VClock};
 /// let mut r1 = MVReg::new();
 /// let mut r2 = r1.clone();
 /// let r1_read_ctx = r1.read();

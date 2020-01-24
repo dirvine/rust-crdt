@@ -1,15 +1,15 @@
-/// Observed-Remove Set With Out Tombstones (ORSWOT), ported directly from `riak_dt`.
+/// Observed-Remove Set With Out Tombstones (ORSWOT), ported directly from
+/// `riak_dt`.
 use std::collections::{HashMap, HashSet};
-use std::cmp::Ordering;
-use std::fmt::Debug;
-use std::hash::Hash;
-use std::mem;
+use std::{cmp::Ordering, fmt::Debug, hash::Hash, mem};
 
 use serde::{Deserialize, Serialize};
 
-use crate::ctx::{AddCtx, ReadCtx, RmCtx};
-use crate::traits::{Causal, CmRDT, CvRDT};
-use crate::vclock::{Actor, Dot, VClock};
+use crate::{
+    ctx::{AddCtx, ReadCtx, RmCtx},
+    traits::{Causal, CmRDT, CvRDT},
+    vclock::{Actor, Dot, VClock},
+};
 
 /// Trait bound alias for members in a set
 pub trait Member: Debug + Clone + Hash + Eq {}
@@ -124,7 +124,8 @@ impl<M: Member, A: Actor> CvRDT for Orswot<M, A> {
                 //  1. have seen it and dropped it
                 //  2. have not seen it
                 if self.clock >= clock {
-                    // We've seen this entry and dropped it, we won't add it back
+                    // We've seen this entry and dropped it, we won't add it
+                    // back
                 } else {
                     // We have not seen this version of this entry, so we add it.
                     // but first, we have to remove the information on this entry
@@ -262,7 +263,6 @@ impl<M: Member, A: Actor> Orswot<M, A> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    
 
     #[test]
     // a bug found with rust quickcheck where deferred operations

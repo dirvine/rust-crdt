@@ -1,9 +1,11 @@
 use num_bigint::BigInt;
 use serde::{Deserialize, Serialize};
 
-use crate::gcounter::GCounter;
-use crate::traits::{Causal, CmRDT, CvRDT};
-use crate::vclock::{Actor, Dot, VClock};
+use crate::{
+    gcounter::GCounter,
+    traits::{Causal, CmRDT, CvRDT},
+    vclock::{Actor, Dot, VClock},
+};
 
 /// `PNCounter` allows the counter to be both incremented and decremented
 /// by representing the increments (P) and the decrements (N) in separate
@@ -15,7 +17,7 @@ use crate::vclock::{Actor, Dot, VClock};
 /// # Examples
 ///
 /// ```
-/// use crdts::{PNCounter, CmRDT};
+/// use crdts::{CmRDT, PNCounter};
 ///
 /// let mut a = PNCounter::new();
 /// a.apply(a.inc("A"));

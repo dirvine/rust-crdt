@@ -2,8 +2,10 @@ use std::fmt::Debug;
 
 use serde::{Deserialize, Serialize};
 
-use crate::error::{self, Error, Result};
-use crate::traits::{FunkyCmRDT, FunkyCvRDT};
+use crate::{
+    error::{self, Error, Result},
+    traits::{FunkyCmRDT, FunkyCvRDT},
+};
 
 /// Trait bound alias for lwwreg vals
 pub trait Val: Debug + Clone + PartialEq {}
@@ -42,7 +44,7 @@ impl<V: Val, M: Marker> FunkyCvRDT for LWWReg<V, M> {
     /// tracks causality. Returns an error if the marker is identical but the
     /// contained element is different.
     /// ```
-    /// use crdts::{LWWReg, FunkyCvRDT};
+    /// use crdts::{FunkyCvRDT, LWWReg};
     /// let mut l1 = LWWReg { val: 1, marker: 2 };
     /// let l2 = LWWReg { val: 3, marker: 2 };
     /// // errors!

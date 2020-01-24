@@ -1,13 +1,16 @@
 use serde::{Deserialize, Serialize};
 
-use crate::traits::CmRDT;
-use crate::vclock::{Actor, Dot, VClock};
+use crate::{
+    traits::CmRDT,
+    vclock::{Actor, Dot, VClock},
+};
 
-/// ReadCtx's are used to extract data from CRDT's while maintaining some causal history.
-/// You should store ReadCtx's close to where mutation is exposed to the user.
+/// ReadCtx's are used to extract data from CRDT's while maintaining some causal
+/// history. You should store ReadCtx's close to where mutation is exposed to
+/// the user.
 ///
-/// e.g. Ship ReadCtx to the clients, then derive an Add/RmCtx and ship that back to
-/// where the CRDT is stored to perform the mutation operation.
+/// e.g. Ship ReadCtx to the clients, then derive an Add/RmCtx and ship that
+/// back to where the CRDT is stored to perform the mutation operation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ReadCtx<V, A: Actor> {
     /// clock used to derive an AddCtx
