@@ -51,7 +51,7 @@ pub enum Op<V: Val, A: Actor> {
 }
 
 impl<V: Val + Display, A: Actor + Display> Display for MVReg<V, A> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "|")?;
         for (i, (ctx, val)) in self.vals.iter().enumerate() {
             if i > 0 {

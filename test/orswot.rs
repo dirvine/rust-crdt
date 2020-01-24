@@ -1,5 +1,5 @@
-extern crate crdts;
-extern crate rand;
+use crdts;
+
 
 use crdts::{orswot::Op, *};
 use std::collections::HashSet;

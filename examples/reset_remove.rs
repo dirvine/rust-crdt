@@ -1,4 +1,4 @@
-extern crate crdts;
+
 
 use crdts::{CmRDT, CvRDT, Map, Orswot};
 

@@ -80,7 +80,7 @@ impl<A: Actor> PartialOrd for VClock<A> {
 }
 
 impl<A: Actor + Display> Display for VClock<A> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "<")?;
         for (i, (actor, count)) in self.dots.iter().enumerate() {
             if i > 0 {
